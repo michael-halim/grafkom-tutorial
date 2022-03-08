@@ -8,7 +8,7 @@ out vec4 outputColor;
 //uniform vec4 ourColor;
 void main(){
 
-	outputColor = vec4(0.33,1.0,0.0,1);
+	outputColor = vec4(0.0,0.713,0.18,1);
 
 
 }
