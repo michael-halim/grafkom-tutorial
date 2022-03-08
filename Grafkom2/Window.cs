@@ -8,43 +8,15 @@ using System.Text;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 namespace Grafkom2
 {
+    static class Constants
+    {
+        public const string SHADER_PATH = "../../../Shaders/";
+    }
 
     internal class Window : GameWindow
     {
-        //float[] _vertices =
-        //{
-        //    -0.2f,-0.2f,0.0f,
-        //    0.2f,-0.2f,0.0f,
-        //    0.0f,0.2f,0.0f
-        //};
-        float[] _vertices =
-        {
-            0.2f,0.2f,0.0f, // top right
-            0.2f,-0.2f,0.0f, // bottom right
-            -0.2f,-0.2f,0.0f, // bottom left
-            -0.2f,0.2f,0.0f, // top left
+        Asset2d[] _object = new Asset2d[4];
 
-            0.5f,-0.2f,0.0f,
-            0.7f,-0.2f,0.0f,
-            0.6f,0.2f,0.0f
-
-        };
-
-        uint[] _indices = {
-            0,1,3, // segitiga pertama
-            1,2,3, // segitiga kedua
-            4,5,6
-            //0,2,3,
-            //0,1,2,
-
-        };
-        int _elementBufferObject;
-
-
-
-        int _vertexBufferObject;
-        int _vertexArrayObject;
-        Shader _shader;
 
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
@@ -55,32 +27,59 @@ namespace Grafkom2
         {
             base.OnLoad();
 
-            GL.ClearColor(0.0f, 1.0f, 1.0f, 1.0f);
+            GL.ClearColor(0.0f, 0.239f, 0.7529f, 1.0f);
 
-            _vertexBufferObject = GL.GenBuffer();
+            //warna kuning
+            _object[0] = new Asset2d(
+                new float[] {
+                    0.0f, 0.5f, 0.0f,
+                    -0.25f, 0.0f, 0.0f,
+                    0.25f, 0.0f, 0.0f,
+                },
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject);
 
-            GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+                new uint[] { }
+            );
 
-            _vertexArrayObject = GL.GenVertexArray();
+            _object[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag");
 
-            GL.BindVertexArray(_vertexArrayObject);
+            //warna merah
+            _object[1] = new Asset2d(
+                new float[] {
+                    0.0f, 0.25f, 0.0f,
+                    -0.25f, -0.25f, 0.0f,
+                    0.25f,-0.25f, 0.0f,
+                },
+                new uint[] { }
+            );
+            _object[1].load(Constants.SHADER_PATH + "segitiga2.vert", Constants.SHADER_PATH + "segitiga2.frag");
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
 
-            GL.EnableVertexAttribArray(0);
 
-            _elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, _elementBufferObject);
+            _object[2] = new Asset2d(
+                new float[] {
+                     0.0f, 0.0f, 0.0f,
+                    -0.25f, -0.5f, 0.0f,
+                    0.25f,-0.5f, 0.0f,
+                },
+                new uint[] { }
+            );
+            _object[2].load(Constants.SHADER_PATH + "segitiga3.vert", Constants.SHADER_PATH + "segitiga3.frag");
 
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
-
-            _shader = new Shader("D:/Program/Visual Studio/Semester 6 (C# Grafkom)/Grafkom2/Grafkom2/Shaders/shader.vert",
-                "D:/Program/Visual Studio/Semester 6 (C# Grafkom)/Grafkom2/Grafkom2/Shaders/shader.frag");
-
-            _shader.Use();
-
+            _object[3] = new Asset2d(
+                new float[] {
+                     -0.1f, -0.5f, 0.0f,
+                    0.1f, -0.5f, 0.0f,
+                    -0.1f,-0.8f, 0.0f,
+                    0.1f,-0.8f, 0.0f,
+                },
+                new uint[] { 
+                    0,1,3,
+                    0,2,3
+                    
+                }
+            );
+            _object[3].load(Constants.SHADER_PATH + "kotak.vert", Constants.SHADER_PATH + "kotak.frag");
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -88,12 +87,10 @@ namespace Grafkom2
             base.OnRenderFrame(args);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            _shader.Use();
-            GL.BindVertexArray(_vertexArrayObject);
-
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
-
-            //GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            _object[3].render();
+            _object[2].render();
+            _object[1].render();
+            _object[0].render();
 
             SwapBuffers();
         }
