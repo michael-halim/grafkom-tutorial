@@ -16,7 +16,7 @@ namespace Grafkom2
         {
             var nativeWindowSettings = new NativeWindowSettings()
             {
-                Size = new OpenTK.Mathematics.Vector2i(800, 600),
+                Size = new OpenTK.Mathematics.Vector2i(800, 800),
                 Title = "Pertemuan 1"
             };
             using (var window = new Window(GameWindowSettings.Default, nativeWindowSettings))

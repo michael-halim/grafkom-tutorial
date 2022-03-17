@@ -83,6 +83,10 @@ namespace Grafkom2
                 {
                     GL.DrawArrays(PrimitiveType.LineStrip, 0, indexs);
                 }
+                else if (_lines == 3)
+                {
+                    GL.DrawArrays(PrimitiveType.LineStrip, 0, (_vertices.Length + 1) / 3);
+                }
             }
         }
         public void createCircle(float center_x, float center_y, float radiusX, float radiusY)
@@ -98,6 +102,21 @@ namespace Grafkom2
                 // z
                 _vertices[i * 3 + 2] = 0;
             }
+        }
+        public void createLine(float x, float y, float other_x, float other_y) 
+        {
+            _vertices = new float[9];
+            for (int i = 0; i < 3; i++)
+            {
+                double degInRad = i * Math.PI / 180;
+                // x
+                _vertices[i * 3] = x * (float)Math.Cos(degInRad) + other_x;
+                // y
+                _vertices[i * 3 + 1] = y * (float)Math.Sin(degInRad) + other_y;
+                // z
+                _vertices[i * 3 + 2] = 0;
+            }
+
         }
         public void updateMousePosition(float _x, float _y, float _z)
         {
