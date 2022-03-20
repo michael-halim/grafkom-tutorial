@@ -16,8 +16,8 @@ namespace Grafkom2
     internal class Window : GameWindow
     {
         Asset2d[] _object = new Asset2d[4];
-        int time = 0;
-        float degree = 0;
+
+        Asset3d[] _object3d = new Asset3d[4];
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
@@ -30,53 +30,14 @@ namespace Grafkom2
             //// ganti background
             GL.ClearColor(0.0f, 0.0f, 0.2f, 1.0f);
             //_object3d[0] = new Asset3d();
-            //_object3d[0].createBoxVertices();
-            //_object3d[0].load(Constants.SHADER_PATH + "shader.vert",Constants.SHADER_PATH + "shader.frag");
+            //_object3d[0].createBoxVertices(0.0f,0.0f,0.0f,0.5f);
+            //_object3d[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag");
 
-            //lingkaran
-            _object[0] = new Asset2d();
-            _object[0].createCircle(0.0f,0.0f,0.3f,0.3f);
-            _object[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag");
-
-            //jam
-            _object[1] = new Asset2d(
-               new float[] {
-                    0.0f, 0.0f, 0.0f,
-                    -0.1f, 0.1f, 0.0f,
-                    0.0f, 0.0f, 0.0f,
-               },
+            //_object3d[0] = new Asset3d();
+            //_object3d[0].createEllipsoid2(1.0f, 0.5f, 0.2f, 0.0f, 0.0f, 0.0f,3,2);
+            //_object3d[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag");
 
 
-               new uint[] { }
-           );
-
-            _object[1].load(Constants.SHADER_PATH + "jam.vert", Constants.SHADER_PATH + "jam.frag");
-
-            //menit
-            _object[2] = new Asset2d(
-               new float[] {
-                    0.0f, 0.0f, 0.0f,
-                    0.22f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f,
-               },
-
-
-               new uint[] { }
-           );
-
-            _object[2].load(Constants.SHADER_PATH + "menit.vert", Constants.SHADER_PATH + "menit.frag");
-
-            //detik
-            _object[3] = new Asset2d(
-              new float[] {
-                 0.0f   , 0.0f  , 0.0f,
-                 0.0f  + (0.27f * (float)Math.Cos(degree)) , 0.0f + (0.27f * (float)Math.Sin(degree)) , 0.0f,
-                 0.0f   , 0.0f  , 0.0f,
-              },
-
-
-              new uint[] { });
-            _object[3].load(Constants.SHADER_PATH + "detik.vert", Constants.SHADER_PATH + "detik.frag");
 
         }
 
@@ -84,17 +45,8 @@ namespace Grafkom2
         {
             base.OnRenderFrame(args);
             GL.Clear(ClearBufferMask.ColorBufferBit);
-            _object[0].render(3);
-            _object[1].render(3);
-            _object[2].render(3);
-            _object[3].render(3);
 
-            if (time % 60 == 0){
-                OnLoad();               
-                degree -= 0.167f;
-            }
-
-            time++;
+            _object3d[0].render(3);
             SwapBuffers();
         }
 

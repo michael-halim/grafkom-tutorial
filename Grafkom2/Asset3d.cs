@@ -307,5 +307,42 @@ namespace Grafkom2
                 }
             }
         }
+
+        public void createOneSideHyperboloid(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z)
+        {
+            float pi = (float)Math.PI;
+            Vector3 temp_vector;
+
+            for (float u = -pi; u <=pi/u ; u += pi/300)
+            {
+                for (float v = -pi/2; v <= pi/u ; v+= pi/300)
+                {
+                    float Sec_V = 1 / (float)Math.Cos(v);
+
+                    temp_vector.X = _x + Sec_V + (float)Math.Cos(u) * radiusX;
+                    temp_vector.Y = _y + Sec_V + (float)Math.Sin(u) * radiusY;
+                    temp_vector.Z = _z + (float)Math.Tan(v) * radiusZ;
+                    _vertices.Add(temp_vector);
+                }
+            }
+        }
+        public void createEllipticCone(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z)
+        {
+            float pi = (float)Math.PI;
+            Vector3 temp_vector;
+
+            for (float u = -pi; u <= pi / u; u += pi / 300)
+            {
+                for (float v = -pi / 2; v <= pi / u; v += pi / 300)
+                {
+                    float Sec_V = 1 / (float)Math.Cos(v);
+
+                    temp_vector.X = _x + Sec_V + (float)Math.Cos(u) * radiusX;
+                    temp_vector.Y = _y + Sec_V + (float)Math.Sin(u) * radiusY;
+                    temp_vector.Z = _z + (float)Math.Tan(v) * radiusZ;
+                    _vertices.Add(temp_vector);
+                }
+            }
+        }
     }
 }
