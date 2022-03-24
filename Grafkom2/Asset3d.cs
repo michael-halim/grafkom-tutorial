@@ -21,16 +21,28 @@ namespace Grafkom2
         int indexs;
         int[] _pascal = { };
 
+        Matrix4 _view;
+        Matrix4 _projection;
+        Matrix4 _model;
+
+
+        public Vector3 _centerPosition;
+        public List<Vector3> _euler;
+
+
+        public List<Asset3d> Child;
         public Asset3d(List<Vector3> vertices, List<uint> indices)
         {
             _vertices = vertices;
             _indices = indices;
+            setDefault();
         }
         public Asset3d()
         {
             _vertices = new List<Vector3>();
+            setDefault();
         }
-        public void load(string shadervert, string shaderfrag)
+        public void load(string shadervert, string shaderfrag, float Size_x, float Size_y)
         {
             // Buffer
             _vertexBufferObject = GL.GenBuffer();
@@ -57,13 +69,45 @@ namespace Grafkom2
 
             _shader = new Shader(shadervert, shaderfrag);
             _shader.Use();
+
+            _view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
+            _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), Size_x / (float)Size_y, 0.1f, 100.0f);
+
+            foreach(var item in Child)
+            {
+                item.load(shadervert, shaderfrag, Size_x, Size_y);
+            }
+
         }
+        
+        public void setDefault()
+        {
+            
+            
+            _model = Matrix4.Identity;
+            _euler = new List<Vector3>();
 
+            // sumbu x
+            _euler.Add(new Vector3(1,0,0));
+            // sumbu y
+            _euler.Add(new Vector3(0,1,0));
+            // sumbu z
+            _euler.Add(new Vector3(0,0,1));
 
-        public void render(int _lines)
+            _centerPosition = new Vector3(0,0,0);
+            Child = new List<Asset3d>();
+        }
+        public void render(int _lines, Matrix4 temp)
         {
             _shader.Use();
             GL.BindVertexArray(_vertexArrayObject);
+            //_model = temp;
+
+
+            _shader.SetMatrix4("model", _model);
+            _shader.SetMatrix4("view", _view);
+            _shader.SetMatrix4("projection", _projection);
+
             if (_indices.Count != 0)
             {
                 GL.DrawElements(PrimitiveType.Triangles, _indices.Count, DrawElementsType.UnsignedInt, 0);
@@ -87,164 +131,171 @@ namespace Grafkom2
                     GL.DrawArrays(PrimitiveType.LineStrip, 0, (_vertices.Count + 1) / 3);
                 }
             }
+            foreach (var i in Child)
+            {
+                i.render(_lines,temp);
+            }
         }
 
         public void createBoxVertices(float x, float y, float z, float length)
         {
+            _centerPosition.X = x;
+            _centerPosition.Y = y;
+            _centerPosition.Z = z;
+
+
+
             Vector3 temp_vector;
 
-            //TITIK 1
-            temp_vector.X = x - length / 2.0f;
-            temp_vector.Y = y + length / 2.0f;
-            temp_vector.Z = z - length / 2.0f;
+            // TITIK 1
+            temp_vector.X = x - length / 2.0f;  // kiri
+            temp_vector.Y = y + length / 2.0f;  // atas
+            temp_vector.Z = z - length / 2.0f;  // depan
             _vertices.Add(temp_vector);
 
-            //TITIK 2
+            // TITIK 2
             temp_vector.X = x + length / 2.0f;
             temp_vector.Y = y + length / 2.0f;
             temp_vector.Z = z - length / 2.0f;
             _vertices.Add(temp_vector);
 
-
-            //TITIK 3
+            // TITIK 3
             temp_vector.X = x - length / 2.0f;
-            temp_vector.Y = y + length / 2.0f;
+            temp_vector.Y = y - length / 2.0f;
             temp_vector.Z = z - length / 2.0f;
             _vertices.Add(temp_vector);
 
-            //TITIK 4
+            // TITIK 4
             temp_vector.X = x + length / 2.0f;
             temp_vector.Y = y - length / 2.0f;
             temp_vector.Z = z - length / 2.0f;
             _vertices.Add(temp_vector);
 
-            //TITIK 5
+            // TITIK 5
             temp_vector.X = x - length / 2.0f;
             temp_vector.Y = y + length / 2.0f;
             temp_vector.Z = z + length / 2.0f;
             _vertices.Add(temp_vector);
 
-            //TITIK 6
+            // TITIK 6
             temp_vector.X = x + length / 2.0f;
             temp_vector.Y = y + length / 2.0f;
             temp_vector.Z = z + length / 2.0f;
             _vertices.Add(temp_vector);
 
-            //TITIK 7
+            // TITIK 7
             temp_vector.X = x - length / 2.0f;
             temp_vector.Y = y - length / 2.0f;
             temp_vector.Z = z + length / 2.0f;
             _vertices.Add(temp_vector);
 
-            //TITIK 8
+            // TITIK 8
             temp_vector.X = x + length / 2.0f;
             temp_vector.Y = y - length / 2.0f;
             temp_vector.Z = z + length / 2.0f;
             _vertices.Add(temp_vector);
 
             _indices = new List<uint> {
-                //SEGITIGA DEPAN 1
-                0, 1, 2,
-
+                 //SEGITIGA DEPAN 1
+                0,1,2,
                 //SEGITIGA DEPAN 2
-                1, 2, 3,
-
+                1,2,3,
                 //SEGITIGA ATAS 1
-                0, 4, 5,
-
+                0,4,5,
                 //SEGITIGA ATAS 2
-                0, 1, 5,
-
+                0,1,5,
                 //SEGITIGA KANAN 1
-                1, 3, 5,
-
+                1,3,5,
                 //SEGITIGA KANAN 2
-                3, 5, 7,
-
-                // SEGITIGA KIRI 1
-                0, 2, 4,
-
-                // SEGITIGA KIRI 2
-                2, 4, 6,
-
-                // SEGITIGA BELAKANG 1
-                4, 5, 6,
-
-                // SEGITIGA BELAKANG 2
-                5, 6, 7,
-
-                // SEGITIGA BAWAH 1
-                2, 3, 6,
-
-                // SEGITIGA BAWAH 2
-                3, 6, 7,
-
+                3,5,7,
+                //SEGITIGA KIRI 1
+                0,2,4,
+                //SEGITIGA KIRI 2
+                2,4,6,
+                //SEGITIGA BELAKANG 1
+                4,5,6,
+                //SEGITIGA BELAKANG 2
+                5,6,7,
+                //SEGITIGA BAWAH 1
+                2,3,6,
+                //SEGITIGA BAWAH 2
+                3,6,7
             };
 
-
-            ////FRONT FACE
-            ////SEGITIGA FRONT 1
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, -0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, 0.5f, -0.5f));
-            ////SEGITIGA FRONT 2
-            //_vertices.Add(new Vector3(0.5f, 0.5f, -0.5f));
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, -0.5f));
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, -0.5f));
-
-            ////BACK FACE
-            ////SEGITIGA BACK 1
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, 0.5f));
-            //_vertices.Add(new Vector3(0.5f, -0.5f, 0.5f));
-            //_vertices.Add(new Vector3(0.5f, 0.5f, 0.5f));
-            ////SEGITIGA BACK 2
-            //_vertices.Add(new Vector3(0.5f, 0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, 0.5f));
-
-            ////LEFT FACE
-            ////SEGITIGA LEFT 1
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, -0.5f));
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, -0.5f));
-            ////SEGITIGA LEFT 2
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, -0.5f));
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, 0.5f));
-
-            ////RIGHT FACE
-            ////SEGITIGA RIGHT 1
-            //_vertices.Add(new Vector3(0.5f, 0.5f, 0.5f));
-            //_vertices.Add(new Vector3(0.5f, 0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, -0.5f, -0.5f));
-            ////SEGITIGA LEFT 2
-            //_vertices.Add(new Vector3(0.5f, -0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, -0.5f, 0.5f));
-            //_vertices.Add(new Vector3(0.5f, 0.5f, 0.5f));
-
-            ////BOTTOM FACE
-            ////SEGITIGA BOTTOM 1
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, -0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, -0.5f, 0.5f));
-            ////SEGITIGA BOTTOM 2
-            //_vertices.Add(new Vector3(0.5f, -0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, -0.5f, -0.5f));
-
-            ////FRONT FACE
-            ////SEGITIGA BOTTOM 1
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, 0.5f, -0.5f));
-            //_vertices.Add(new Vector3(0.5f, 0.5f, 0.5f));
-            ////SEGITIGA BOTTOM 2
-            //_vertices.Add(new Vector3(0.5f, 0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, 0.5f));
-            //_vertices.Add(new Vector3(-0.5f, 0.5f, -0.5f));
         }
+        public Vector3 getRotationResult(Vector3 pivot, Vector3 vector, float angle, Vector3 point, bool isEuler = false)
+        {
+            Vector3 temp, newPosition;
 
+            if (isEuler)
+            {
+                temp = point;
+            }
+            else
+            {
+                temp = point - pivot;
+            }
+
+            newPosition.X =
+                temp.X * (float)(Math.Cos(angle) + Math.Pow(vector.X, 2.0f) * (1.0f - Math.Cos(angle))) +
+                temp.Y * (float)(vector.X * vector.Y * (1.0f - Math.Cos(angle)) - vector.Z * Math.Sin(angle)) +
+                temp.Z * (float)(vector.X * vector.Z * (1.0f - Math.Cos(angle)) + vector.Y * Math.Sin(angle));
+
+            newPosition.Y =
+                temp.X * (float)(vector.X * vector.Y * (1.0f - Math.Cos(angle)) + vector.Z * Math.Sin(angle)) +
+                temp.Y * (float)(Math.Cos(angle) + Math.Pow(vector.Y, 2.0f) * (1.0f - Math.Cos(angle))) +
+                temp.Z * (float)(vector.Y * vector.Z * (1.0f - Math.Cos(angle)) - vector.X * Math.Sin(angle));
+
+            newPosition.Z =
+                temp.X * (float)(vector.X * vector.Z * (1.0f - Math.Cos(angle)) - vector.Y * Math.Sin(angle)) +
+                temp.Y * (float)(vector.Y * vector.Z * (1.0f - Math.Cos(angle)) + vector.X * Math.Sin(angle)) +
+                temp.Z * (float)(Math.Cos(angle) + Math.Pow(vector.Z, 2.0f) * (1.0f - Math.Cos(angle)));
+
+            if (isEuler)
+            {
+                temp = newPosition;
+            }
+            else
+            {
+                temp = newPosition + pivot;
+            }
+            return temp;
+        }
+        public void rotate(Vector3 pivot, Vector3 vector, float angle)
+        {
+            var radAngle = MathHelper.DegreesToRadians(angle);
+
+            var arbRotationMatrix = new Matrix4
+                (
+                new Vector4((float)(Math.Cos(radAngle) + Math.Pow(vector.X, 2.0f) * (1.0f - Math.Cos(radAngle))), (float)(vector.X * vector.Y * (1.0f - Math.Cos(radAngle)) + vector.Z * Math.Sin(radAngle)), (float)(vector.X * vector.Z * (1.0f - Math.Cos(radAngle)) - vector.Y * Math.Sin(radAngle)), 0),
+                new Vector4((float)(vector.X * vector.Y * (1.0f - Math.Cos(radAngle)) - vector.Z * Math.Sin(radAngle)), (float)(Math.Cos(radAngle) + Math.Pow(vector.Y, 2.0f) * (1.0f - Math.Cos(radAngle))), (float)(vector.Y * vector.Z * (1.0f - Math.Cos(radAngle)) + vector.X * Math.Sin(radAngle)), 0),
+                new Vector4((float)(vector.X * vector.Z * (1.0f - Math.Cos(radAngle)) + vector.Y * Math.Sin(radAngle)), (float)(vector.Y * vector.Z * (1.0f - Math.Cos(radAngle)) - vector.X * Math.Sin(radAngle)), (float)(Math.Cos(radAngle) + Math.Pow(vector.Z, 2.0f) * (1.0f - Math.Cos(radAngle))), 0),
+                Vector4.UnitW
+                );
+
+            _model *= Matrix4.CreateTranslation(-pivot);
+            _model *= arbRotationMatrix;
+            _model *= Matrix4.CreateTranslation(pivot);
+
+            for (int i = 0; i < 3; i++)
+            {
+                _euler[i] = Vector3.Normalize(getRotationResult(pivot, vector, radAngle, _euler[i], true));
+            }
+
+            _centerPosition = getRotationResult(pivot, vector, radAngle, _centerPosition);
+            //objectCenter = getRotationResult(pivot, vector, radAngle, objectCenter);
+
+            foreach (var i in Child)
+            {
+                i.rotate(pivot, vector, angle);
+            }
+        }
         public void createEllipsoid(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z)
         {
+            _centerPosition.X = _x;
+            _centerPosition.Y = _y;
+            _centerPosition.Z = _z;
+
             float pi = (float)Math.PI;
             Vector3 temp_vector;
             for (float u = -pi;  u <= pi/u ; u += pi/300)
@@ -261,6 +312,7 @@ namespace Grafkom2
         }
         public void createEllipsoid2(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z, int sectorCount, int stackCount)
         {
+
             float pi = (float)Math.PI;
             Vector3 temp_vector;
             float sectorStep = 2 * (float)Math.PI / sectorCount;
@@ -343,6 +395,12 @@ namespace Grafkom2
                     _vertices.Add(temp_vector);
                 }
             }
+        }
+        public void addChild(float x, float y, float z, float length)
+        {
+            Asset3d newChild = new Asset3d();
+            newChild.createBoxVertices(x, y, z, length);
+            Child.Add(newChild);
         }
     }
 }
