@@ -34,8 +34,19 @@ namespace Grafkom2
             //// ganti background
             GL.ClearColor(0.0f, 0.0f, 0.2f, 1.0f);
             _object3d[0] = new Asset3d();
-            _object3d[0].createBoxVertices(0.0f, 0.0f, 0.0f, 0.5f);
-            _object3d[0].addChild(0.7f, 0.7f, 0.3f, 0.1f);
+            //_object3d[0].createBoxVertices(0.0f, 0.0f, 0.0f, 0.5f);
+            //_object3d[0].addChild(0.7f, 0.7f, 0.3f, 0.1f);
+
+
+
+            //_object3d[0].createEllipsoid2(0.5f, 0.3f, -0.5f,0.0f,0.0f,0.0f,10,10);
+            //_object3d[0].createEllipticParaboloid(0.2f, 0.2f, 0.2f, 0f, 0f, 0f);
+            //_object3d[0].createOneSideHyperboloid(0.2f, 0.2f, 0.2f, 0f, 0f, 0f);
+            //_object3d[0].createTwoSideHyperboloid(0.2f, 0.2f, 0.2f, 0f, 0f, 0f);
+            //_object3d[0].createHyperboloidParaboloid(0.2f, 0.2f, 0.2f, 0f, 0f, 0f);
+            //_object3d[0].createEllipticCone(0.2f, 0.2f, 0.2f, 0f, 0f, 0f);
+            //_object3d[0].createTorus(0.0f, 0f, 0f, 0.005f, 0.5f, 100f, 77f); // sphere
+            //_object3d[0].createSphere(0.0f, 0.0f, 1f, 0.4f);
 
             _object3d[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag", Size.X, Size.Y);
 
@@ -62,9 +73,9 @@ namespace Grafkom2
 
             _object3d[0].render(3,temp);
 
-            _object3d[0].rotate(_object3d[0]._centerPosition,_object3d[0]._euler[0],degree % 2);
-            _object3d[0].rotate(_object3d[0]._centerPosition,_object3d[0]._euler[1],degree % 2);
-            _object3d[0].rotate(_object3d[0]._centerPosition,_object3d[0]._euler[2],degree % 2);
+            //_object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[0], degree % 2);
+            _object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[1], degree % 2);
+            //_object3d[0].rotate(_object3d[0]._centerPosition,_object3d[0]._euler[2],degree % 2);
             degree += 0.5f;
             SwapBuffers();
         }

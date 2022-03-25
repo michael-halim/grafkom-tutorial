@@ -31,6 +31,8 @@ namespace Grafkom2
 
 
         public List<Asset3d> Child;
+        private Vector3 objectCenter;
+
         public Asset3d(List<Vector3> vertices, List<uint> indices)
         {
             _vertices = vertices;
@@ -120,7 +122,7 @@ namespace Grafkom2
                 }
                 else if (_lines == 1)
                 {
-                    GL.DrawArrays(PrimitiveType.TriangleFan, 0, (_vertices.Count + 1) / 3);
+                    GL.DrawArrays(PrimitiveType.TriangleFan, 0, (_vertices.Count));
                 }
                 else if (_lines == 2)
                 {
@@ -128,7 +130,7 @@ namespace Grafkom2
                 }
                 else if (_lines == 3)
                 {
-                    GL.DrawArrays(PrimitiveType.LineStrip, 0, (_vertices.Count + 1) / 3);
+                    GL.DrawArrays(PrimitiveType.LineStrip ,0, _vertices.Count);
                 }
             }
             foreach (var i in Child)
@@ -367,13 +369,43 @@ namespace Grafkom2
 
             for (float u = -pi; u <=pi/u ; u += pi/300)
             {
-                for (float v = -pi/2; v <= pi/u ; v+= pi/300)
+                for (float v = -pi/2; v <= pi/2 ; v+= pi/300)
                 {
                     float Sec_V = 1 / (float)Math.Cos(v);
 
-                    temp_vector.X = _x + Sec_V + (float)Math.Cos(u) * radiusX;
-                    temp_vector.Y = _y + Sec_V + (float)Math.Sin(u) * radiusY;
-                    temp_vector.Z = _z + (float)Math.Tan(v) * radiusZ;
+                    temp_vector.X = _x + radiusX * Sec_V * (float)Math.Cos(u);
+                    temp_vector.Y = _y + radiusY *  Sec_V * (float)Math.Sin(u) ;
+                    temp_vector.Z = _z + radiusZ * (float)Math.Tan(v);
+                    _vertices.Add(temp_vector);
+                }
+            }
+        }
+        public void createTwoSideHyperboloid(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z)
+        {
+            float pi = (float)Math.PI;
+            Vector3 temp_vector;
+
+            for (float u = -pi; u <= pi / u; u += pi / 300)
+            {
+                for (float v = -pi / 2; v <= pi / 2; v += pi / 300)
+                {
+                    float Sec_V = 1 / (float)Math.Cos(v);
+
+                    temp_vector.X = _x + (float)Math.Tan(v) * (float)Math.Cos(u) * radiusX;
+                    temp_vector.Y = _y + (float)Math.Tan(v) * (float)Math.Sin(u) * radiusY;
+                    temp_vector.Z = _z + Sec_V * radiusZ;
+                    _vertices.Add(temp_vector);
+                }
+            }
+            for (float u = -pi/2; u <= 3*pi / 2; u += pi / 300)
+            {
+                for (float v = -pi / 2; v <= pi / 2; v += pi / 300)
+                {
+                    float Sec_V = 1 / (float)Math.Cos(v);
+
+                    temp_vector.X = _x + (float)Math.Tan(v) * (float)Math.Cos(u) * radiusX;
+                    temp_vector.Y = _y + (float)Math.Tan(v) * (float)Math.Sin(u) * radiusY;
+                    temp_vector.Z = _z + Sec_V * radiusZ;
                     _vertices.Add(temp_vector);
                 }
             }
@@ -383,18 +415,119 @@ namespace Grafkom2
             float pi = (float)Math.PI;
             Vector3 temp_vector;
 
-            for (float u = -pi; u <= pi / u; u += pi / 300)
+            for (float u = -pi; u <= pi; u += pi / 600)
             {
-                for (float v = -pi / 2; v <= pi / u; v += pi / 300)
+                for (float v = 0; v <= 1; v += pi / 600)
                 {
                     float Sec_V = 1 / (float)Math.Cos(v);
 
-                    temp_vector.X = _x + Sec_V + (float)Math.Cos(u) * radiusX;
-                    temp_vector.Y = _y + Sec_V + (float)Math.Sin(u) * radiusY;
-                    temp_vector.Z = _z + (float)Math.Tan(v) * radiusZ;
+                    temp_vector.X = _x + v * (float)Math.Cos(u) * radiusX;
+                    temp_vector.Y = _y + v * (float)Math.Sin(u) * radiusY;
+                    temp_vector.Z = _z + v * radiusZ;
                     _vertices.Add(temp_vector);
                 }
             }
+        }
+        public void createEllipticParaboloid(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z)
+        {
+            float pi = (float)Math.PI;
+            Vector3 temp_vector;
+
+            for (float v = -pi; v <= pi; v += pi / 100)
+            {
+                for (float u = 0; u <= 10; u += pi / 100)
+                {
+                    float Sec_V = 1 / (float)Math.Cos(v);
+
+                    temp_vector.X = _x + v * (float)Math.Cos(u) * radiusX;
+                    temp_vector.Y = _y + v * (float)Math.Sin(u) * radiusY;
+                    temp_vector.Z = _z + v * v * radiusZ;
+                    _vertices.Add(temp_vector);
+                }
+            }
+        }
+        public void createHyperboloidParaboloid(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z)
+        {
+            float pi = (float)Math.PI;
+            Vector3 temp_vector;
+
+            for (float u = -pi; u <= pi; u += pi / 30)
+            {
+                for (float v = 0; v <= 5; v += pi / 30)
+                {
+                    float Sec_U = 1 / (float)Math.Cos(u);
+
+                    temp_vector.X = _x + v * (float)Math.Tan(u) * radiusX;
+                    temp_vector.Y = _y + v * Sec_U * radiusY;
+                    temp_vector.Z = _z + v * v * radiusZ;
+                    _vertices.Add(temp_vector);
+                }
+            }
+        }
+        public void createTorus(float x, float y, float z, float radMajor, float radMinor, float sectorCount, float stackCount)
+        {
+            objectCenter = new Vector3(x, y, z);
+
+            float pi = (float)Math.PI;
+            Vector3 temp_vector;
+            stackCount *= 2;
+            float sectorStep = 2 * pi / sectorCount;
+            float stackStep = 2 * pi / stackCount;
+            float sectorAngle, stackAngle, tempX, tempY, tempZ;
+
+            for (int i = 0; i <= stackCount; ++i)
+            {
+                stackAngle = pi / 2 - i * stackStep;
+                tempX = radMajor + radMinor * (float)Math.Cos(stackAngle);
+                tempY = radMinor * (float)Math.Sin(stackAngle);
+                tempZ = radMajor + radMinor * (float)Math.Cos(stackAngle);
+
+                for (int j = 0; j <= sectorCount; ++j)
+                {
+                    sectorAngle = j * sectorStep;
+
+                    temp_vector.X = x + tempX * (float)Math.Cos(sectorAngle);
+                    temp_vector.Y = y + tempY;
+                    temp_vector.Z = z + tempZ * (float)Math.Sin(sectorAngle);
+
+                    _vertices.Add(temp_vector);
+                }
+            }
+
+            uint k1, k2;
+            for (int i = 0; i < stackCount; ++i)
+            {
+                k1 = (uint)(i * (sectorCount + 1));
+                k2 = (uint)(k1 + sectorCount + 1);
+
+                for (int j = 0; j < sectorCount; ++j, ++k1, ++k2)
+                {
+                    _indices.Add(k1);
+                    _indices.Add(k2);
+                    _indices.Add(k1 + 1);
+
+                    _indices.Add(k1 + 1);
+                    _indices.Add(k2);
+                    _indices.Add(k2 + 1);
+                }
+            }
+        }
+        public void createSphere(float _positionX = 0.0f, float _positionY = -0.4f, float _positionZ = 0.0f, float _radius = 0.3f)
+        {
+            Vector3 temp_vector;
+            float _pi = 3.14f;
+
+            for (float v = -_pi*2; v <= _pi*2; v += 0.01f)
+            {
+                for (float u = -_pi*2; u <= _pi*2; u += _pi / 30)
+                {
+                    temp_vector.X = _positionX + _radius * (float)Math.Cos(v) * (float)Math.Cos(u);
+                    temp_vector.Y = _positionY + _radius * (float)Math.Cos(v) * (float)Math.Sin(u);
+                    temp_vector.Z = _positionZ + _radius * (float)Math.Sin(v);
+                    _vertices.Add(temp_vector);
+                }
+            }
+
         }
         public void addChild(float x, float y, float z, float length)
         {
