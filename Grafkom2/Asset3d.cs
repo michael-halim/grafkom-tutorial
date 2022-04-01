@@ -517,9 +517,9 @@ namespace Grafkom2
             Vector3 temp_vector;
             float _pi = 3.14f;
 
-            for (float v = -_pi*2; v <= _pi*2; v += 0.01f)
+            for (float v = -_pi/2; v <= _pi/2; v += 0.15f)
             {
-                for (float u = -_pi*2; u <= _pi*2; u += _pi / 30)
+                for (float u = -_pi; u <= _pi; u += _pi / 30)
                 {
                     temp_vector.X = _positionX + _radius * (float)Math.Cos(v) * (float)Math.Cos(u);
                     temp_vector.Y = _positionY + _radius * (float)Math.Cos(v) * (float)Math.Sin(u);

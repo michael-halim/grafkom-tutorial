@@ -20,7 +20,8 @@ namespace Grafkom2
         Asset2d[] _object = new Asset2d[4];
 
         Asset3d[] _object3d = new Asset3d[4];
-
+        Circle circle = new Circle();
+        EightSidedBox esb = new EightSidedBox();
         float degree = 0;
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
@@ -48,7 +49,19 @@ namespace Grafkom2
             //_object3d[0].createTorus(0.0f, 0f, 0f, 0.005f, 0.5f, 100f, 77f); // sphere
             //_object3d[0].createSphere(0.0f, 0.0f, 1f, 0.4f);
 
-            _object3d[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag", Size.X, Size.Y);
+            //Body
+            //circle.createSphere(0.0f, 0.0f, 1f, 0.1f);
+            //circle.addChild(0.0f, 0.2f, 1f, 0.1f);
+            //circle.addChild(0.0f, 0.4f, 1f, 0.1f);
+            //circle.load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag", Size.X, Size.Y);
+
+            //limb
+            esb.createBoxVertices(0, 0, 0, 0.2f,0.4f);
+            esb.load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag", Size.X, Size.Y);
+
+
+
+            //_object3d[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag", Size.X, Size.Y);
 
             //_object3d[0] = new Asset3d();
             //_object3d[0].createEllipsoid2(1.0f, 0.5f, 0.2f, 0.0f, 0.0f, 0.0f,3,2);
@@ -71,11 +84,26 @@ namespace Grafkom2
             //temp = temp * Matrix4.CreateRotationY(degree % 360);
             //temp = temp * Matrix4.CreateRotationZ(degree % 360);
 
-            _object3d[0].render(3,temp);
+            //_object3d[0].render(3, temp);
+            
+            //render and rotate
+            //circle.render(3, temp);
+            //circle.rotate(_object3d[0]._centerPosition, _object3d[0]._euler[1], degree % 2);
+
+
+            //render and rotate
+            esb.render(3, temp);
+            //esb.rotate(_object3d[0]._centerPosition, _object3d[0]._euler[0], degree % 2);
+            esb.rotate(_object3d[0]._centerPosition, _object3d[0]._euler[1], degree % 2);
+            //esb.rotate(_object3d[0]._centerPosition, _object3d[0]._euler[2], degree % 2);
+
+
+
+
 
             //_object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[0], degree % 2);
-            _object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[1], degree % 2);
-            //_object3d[0].rotate(_object3d[0]._centerPosition,_object3d[0]._euler[2],degree % 2);
+            //_object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[1], degree % 2);
+            //_object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[2], degree % 2);
             degree += 0.5f;
             SwapBuffers();
         }
