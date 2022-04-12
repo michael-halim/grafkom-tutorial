@@ -312,9 +312,9 @@ namespace Grafkom2
                 }
             }
         }
-        public void createEllipsoid2(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z, int sectorCount, int stackCount)
+        public void F_createEllipsoid(float radiusX, float radiusY, float radiusZ, float _x, float _y, float _z, int sectorCount, int stackCount)
         {
-
+            _centerPosition = new Vector3(_x, _y, _z);
             float pi = (float)Math.PI;
             Vector3 temp_vector;
             float sectorStep = 2 * (float)Math.PI / sectorCount;
@@ -328,13 +328,13 @@ namespace Grafkom2
                 y = radiusY * (float)Math.Cos(StackAngle);
                 z = radiusZ * (float)Math.Sin(StackAngle);
 
-                for (int j = 0; j <= sectorCount; ++j)
+                for (int j = 0; j <= sectorCount / 2; ++j)
                 {
                     sectorAngle = j * sectorStep;
 
-                    temp_vector.X = x * (float)Math.Cos(sectorAngle);
-                    temp_vector.Y = y * (float)Math.Sin(sectorAngle);
-                    temp_vector.Z = z;
+                    temp_vector.X = _x + x * (float)Math.Cos(sectorAngle);
+                    temp_vector.Y = _y + y * (float)Math.Sin(sectorAngle);
+                    temp_vector.Z = _z + z;
                     _vertices.Add(temp_vector);
                 }
             }
@@ -433,9 +433,9 @@ namespace Grafkom2
             float pi = (float)Math.PI;
             Vector3 temp_vector;
 
-            for (float v = -pi; v <= pi; v += pi / 100)
+            for (float v = -pi/2; v <= pi/2; v += pi / 100)
             {
-                for (float u = 0; u <= 10; u += pi / 100)
+                for (float u = 0; u <= 8; u += pi / 3)
                 {
                     float Sec_V = 1 / (float)Math.Cos(v);
 

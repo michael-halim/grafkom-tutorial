@@ -32,6 +32,7 @@ namespace Grafkom2
 
         public List<Circle> Child;
         private Vector3 objectCenter;
+        public List<Limb> LimbChild;
 
         public Circle(List<Vector3> vertices, List<uint> indices)
         {
@@ -210,12 +211,13 @@ namespace Grafkom2
         
         public void createSphere(float _positionX = 0.0f, float _positionY = -0.4f, float _positionZ = 0.0f, float _radius = 0.3f)
         {
+            _centerPosition = new Vector3(_positionX, _positionY, _positionZ);
             Vector3 temp_vector;
             float _pi = 3.14f;
 
-            for (float u = -_pi; u <= _pi; u += _pi / 30)
+            for (float u = -_pi; u <= _pi; u += _pi / 300)
             {
-                for ( float v = -_pi / 2; v <= _pi / 2; v += 0.2f)
+                for ( float v = -_pi; v <= _pi; v += 0.02f)
                 {
                     temp_vector.X = _positionX + _radius * (float)Math.Cos(v) * (float)Math.Cos(u);
                     temp_vector.Y = _positionY + _radius * (float)Math.Cos(v) * (float)Math.Sin(u);
@@ -225,11 +227,275 @@ namespace Grafkom2
             }
 
         }
-        public void addChild(float x, float y, float z, float radius)
+        public void h_createHalfSphere(float _positionX = 0.0f, float _positionY = -0.4f, float _positionZ = 0.0f, float _radius = 0.3f,string type="NORMAL")
         {
-            Circle newChild = new Circle();
-            newChild.createSphere(x, y, z, radius);
-            Child.Add(newChild);
+            _centerPosition = new Vector3(_positionX, _positionY, _positionZ);
+
+            if (type == "FLIP")
+            {
+                Vector3 temp_vector;
+                float _pi = 3.14f;
+
+                for (float u = _pi; u >= 0; u -= _pi / 300)
+                {
+                    for (float v = -_pi / 2; v <= _pi / 2; v += 0.02f)
+                    {
+                        temp_vector.X = _positionX + _radius * (float)Math.Cos(v) * (float)Math.Cos(u);
+                        temp_vector.Y = _positionY + _radius * (float)Math.Cos(v) * (float)Math.Sin(u);
+                        temp_vector.Z = _positionZ + _radius * (float)Math.Sin(v);
+                        
+                        _vertices.Add(temp_vector);
+                    }
+                }
+                rotate(_centerPosition, _euler[0], 180);
+            }
+            else
+            {
+                Vector3 temp_vector;
+                float _pi = 3.14f;
+
+                for (float u = 0; u <= _pi; u += _pi / 300)
+                {
+                    for (float v = -_pi / 2; v <= _pi / 2; v += 0.02f)
+                    {
+                        temp_vector.X = _positionX + _radius * (float)Math.Cos(v) * (float)Math.Cos(u);
+                        temp_vector.Y = _positionY + _radius * (float)Math.Cos(v) * (float)Math.Sin(u);
+                        temp_vector.Z = _positionZ + _radius * (float)Math.Sin(v);
+                        _vertices.Add(temp_vector);
+                    }
+                }
+            }
+            
+
         }
+        public void halimBoxVertices(float x, float y, float z, float lengthTop, float lengthBottom)
+        {
+            // normal center position
+            //_centerPosition.X = x;
+            //_centerPosition.Y = y;
+            //_centerPosition.Z = z;
+
+            // supaya pivot dibawah
+            _centerPosition.X = x;
+            _centerPosition.Y = y - lengthBottom;
+            _centerPosition.Z = z;
+
+            float offset = lengthTop / 2;
+
+            Vector3 temp_vector;
+
+            //Tampilan Depan
+            //============================================
+
+            //TITIK 1
+            temp_vector.X = x - offset / 2.0f;  // kiri
+            temp_vector.Y = y + lengthBottom;  // atas
+            temp_vector.Z = z + lengthBottom / 7f;  // depan
+            _vertices.Add(temp_vector);
+
+            // TITIK 2
+            temp_vector.X = x + lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
+            temp_vector.Z = z + lengthBottom / 2.0f;
+            _vertices.Add(temp_vector);
+
+            // TITIK 3
+            temp_vector.X = x - lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
+            temp_vector.Z = z + lengthBottom / 2.0f;
+            _vertices.Add(temp_vector);
+
+            // TITIK 4
+            temp_vector.X = x + offset / 2.0f;
+            temp_vector.Y = y + lengthBottom;
+            temp_vector.Z = z + lengthBottom / 7f;
+            _vertices.Add(temp_vector);
+
+            //============================================
+
+            //Tampilan Belakang
+            //============================================
+
+            //TITIK 5
+            temp_vector.X = x - offset / 2.0f;  // kiri
+            temp_vector.Y = y + lengthBottom;  // atas
+            temp_vector.Z = z - lengthBottom / 7f;  // depan
+            _vertices.Add(temp_vector);
+
+            // TITIK 6
+            temp_vector.X = x + lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
+            temp_vector.Z = z - lengthBottom / 2.0f;
+            _vertices.Add(temp_vector);
+
+            // TITIK 7
+            temp_vector.X = x - lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
+            temp_vector.Z = z - lengthBottom / 2.0f;
+            _vertices.Add(temp_vector);
+
+            // TITIK 8
+            temp_vector.X = x + offset / 2.0f;
+            temp_vector.Y = y + lengthBottom;
+            temp_vector.Z = z - lengthBottom / 7f;
+            _vertices.Add(temp_vector);
+
+            //============================================
+
+            _indices = new List<uint> {
+                 //SEGITIGA DEPAN 1
+                0,1,2,
+                //SEGITIGA DEPAN 2
+                0,1,3,
+
+                4,5,6,
+                4,5,7,
+
+                1,3,5,
+                3,5,7,
+
+                0,4,6,
+                0,2,6
+            };
+
+        }
+
+        //public void createHalfSphere(float _positionX = 0.0f, float _positionY = -0.4f, float _positionZ = 0.0f, float _radius = 0.3f)
+        //{
+        //    Vector3 temp_vector;
+        //    float _pi = 3.14f;
+
+        //    for (float u = -_pi / 2; u <= _pi / 2; u += _pi / 30)
+        //    {
+        //        for (float v = -_pi / 2; v <= _pi / 2; v += 0.02f)
+        //        {
+        //            temp_vector.X = _positionX + _radius * (float)Math.Cos(v) * (float)Math.Cos(u);
+        //            temp_vector.Y = _positionY + _radius * (float)Math.Cos(v) * (float)Math.Sin(u);
+        //            temp_vector.Z = _positionZ + _radius * (float)Math.Sin(v);
+        //            _vertices.Add(temp_vector);
+        //        }
+        //    }
+
+        //}
+        //public void createBoxVertices(float x, float y, float z, float lengthTop, float lengthBottom)
+        //{
+        //    _centerPosition.X = x;
+        //    _centerPosition.Y = y;
+        //    _centerPosition.Z = z;
+
+        //    float offset = lengthTop / 2;
+
+        //    Vector3 temp_vector;
+
+        //    //Tampilan Depan
+        //    //============================================
+
+        //    //TITIK 1
+        //    temp_vector.X = x - offset / 2.0f;  // kiri
+        //    temp_vector.Y = y + lengthBottom;  // atas
+        //    temp_vector.Z = z + lengthBottom / 7f;  // depan
+        //    _vertices.Add(temp_vector);
+
+        //    // TITIK 2
+        //    temp_vector.X = x + lengthBottom / 2.0f;
+        //    temp_vector.Y = y - lengthBottom;
+        //    temp_vector.Z = z + lengthBottom / 2.0f;
+        //    _vertices.Add(temp_vector);
+
+        //    // TITIK 3
+        //    temp_vector.X = x - lengthBottom / 2.0f;
+        //    temp_vector.Y = y - lengthBottom;
+        //    temp_vector.Z = z + lengthBottom / 2.0f;
+        //    _vertices.Add(temp_vector);
+
+        //    // TITIK 4
+        //    temp_vector.X = x + offset / 2.0f;
+        //    temp_vector.Y = y + lengthBottom;
+        //    temp_vector.Z = z + lengthBottom / 7f;
+        //    _vertices.Add(temp_vector);
+
+        //    //============================================
+
+        //    //Tampilan Belakang
+        //    //============================================
+
+        //    //TITIK 5
+        //    temp_vector.X = x - offset / 2.0f;  // kiri
+        //    temp_vector.Y = y + lengthBottom;  // atas
+        //    temp_vector.Z = z - lengthBottom / 7f;  // depan
+        //    _vertices.Add(temp_vector);
+
+        //    // TITIK 6
+        //    temp_vector.X = x + lengthBottom / 2.0f;
+        //    temp_vector.Y = y - lengthBottom;
+        //    temp_vector.Z = z - lengthBottom / 2.0f;
+        //    _vertices.Add(temp_vector);
+
+        //    // TITIK 7
+        //    temp_vector.X = x - lengthBottom / 2.0f;
+        //    temp_vector.Y = y - lengthBottom;
+        //    temp_vector.Z = z - lengthBottom / 2.0f;
+        //    _vertices.Add(temp_vector);
+
+        //    // TITIK 8
+        //    temp_vector.X = x + offset / 2.0f;
+        //    temp_vector.Y = y + lengthBottom;
+        //    temp_vector.Z = z - lengthBottom / 7f;
+        //    _vertices.Add(temp_vector);
+
+        //    //============================================
+
+        //    _indices = new List<uint> {
+        //         //SEGITIGA DEPAN 1
+        //        0,1,2,
+        //        //SEGITIGA DEPAN 2
+        //        0,1,3,
+
+        //        4,5,6,
+        //        4,5,7,
+
+        //        1,3,5,
+        //        3,5,7,
+
+        //        0,4,6,
+        //        0,2,6
+        //    };
+
+        //}
+        public void addChild(Circle circle)
+        {
+            Child.Add(circle);
+        }
+        //public void addChild(float x, float y, float z, float radius, float rotateDegreeX = 0, float rotateDegreeY = 0, float rotateDegreeZ = 0)
+        //{
+        //    Circle newChild = new Circle();
+        //    //rotate(new Vector3(x, y, z), newChild, 30);
+        //    newChild.createSphere(x, y, z, radius);
+        //    //rotate(new Vector3(x, y, z), _euler[0], rotateDegreeX);
+        //    //rotate(new Vector3(x, y, z), _euler[1], rotateDegreeY);
+        //    //rotate(new Vector3(x, y, z), _euler[2], rotateDegreeZ);
+        //    Child.Add(newChild);
+        //}
+        //public void addBoxChild(float x, float y, float z, float lengthTop, float lengthBottom, float rotateDegreeX = 0, float rotateDegreeY = 0, float rotateDegreeZ = 0)
+        //{
+        //    Circle newChild = new Circle();
+        //    newChild.createBoxVertices(x, y, z, lengthTop, lengthBottom);
+        //    rotate(new Vector3(x, y, z), _euler[0], rotateDegreeX);
+        //    rotate(new Vector3(x, y, z), _euler[1], rotateDegreeY);
+        //    rotate(new Vector3(x, y, z), _euler[2], rotateDegreeZ);
+        //    Child.Add(newChild);
+        //}
+        //public void addHalfSphereChild(float x, float y, float z, float radius, float rotateDegreeX = 0, float rotateDegreeY = 0, float rotateDegreeZ = 0)
+        //{
+        //    Circle newChild = new Circle();
+        //     newChild.createHalfSphere(x, y, z, radius);
+        //    //rotate(new Vector3(x, y, z), _euler[0], rotateDegreeX);
+        //    //rotate(new Vector3(x, y, z), _euler[1], rotateDegreeY);
+        //    //rotate(new Vector3(x, y, z), _euler[2], rotateDegreeZ);
+        //    //rotate(new Vector3(x,y,z), _euler[0], 200);
+
+        //    Child.Add(newChild);
+        //}
+        
     }
 }

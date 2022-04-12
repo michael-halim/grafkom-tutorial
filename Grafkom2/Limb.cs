@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Grafkom2
 {
-    internal class EightSidedBox
+    internal class Limb
     {
         // segitiga
 
@@ -30,19 +30,22 @@ namespace Grafkom2
         public List<Vector3> _euler;
 
 
-        public List<EightSidedBox> Child;
+        public List<Limb> Child;
+        public List<Circle> SphereChild;
         private Vector3 objectCenter;
 
-        public EightSidedBox(List<Vector3> vertices, List<uint> indices)
+        public Limb(List<Vector3> vertices, List<uint> indices)
         {
             _vertices = vertices;
             _indices = indices;
             setDefault();
         }
-        public EightSidedBox()
+        public Limb()
         {
             _vertices = new List<Vector3>();
             setDefault();
+
+            
         }
         public void load(string shadervert, string shaderfrag, float Size_x, float Size_y)
         {
@@ -81,7 +84,7 @@ namespace Grafkom2
             }
 
         }
-
+        
         public void setDefault()
         {
 
@@ -97,7 +100,7 @@ namespace Grafkom2
             _euler.Add(new Vector3(0, 0, 1));
 
             _centerPosition = new Vector3(0, 0, 0);
-            Child = new List<EightSidedBox>();
+            Child = new List<Limb>();
         }
         public void render(int _lines, Matrix4 temp)
         {
@@ -153,118 +156,99 @@ namespace Grafkom2
             //Tampilan Depan
             //============================================
 
-            // TITIK 1
+             //TITIK 1
             temp_vector.X = x - offset / 2.0f;  // kiri
-            temp_vector.Y = y + lengthBottom / 2.0f;  // atas
-            temp_vector.Z = z - lengthBottom / 2.0f;  // depan
+            temp_vector.Y = y + lengthBottom;  // atas
+            temp_vector.Z = z + lengthBottom / 7f;  // depan
             _vertices.Add(temp_vector);
 
             // TITIK 2
             temp_vector.X = x + lengthBottom / 2.0f;
-            temp_vector.Y = y - lengthBottom / 2.0f;
-            temp_vector.Z = z - lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
+            temp_vector.Z = z + lengthBottom / 2.0f;
             _vertices.Add(temp_vector);
 
             // TITIK 3
             temp_vector.X = x - lengthBottom / 2.0f;
-            temp_vector.Y = y - lengthBottom / 2.0f;
-            temp_vector.Z = z - lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
+            temp_vector.Z = z + lengthBottom / 2.0f;
             _vertices.Add(temp_vector);
 
             // TITIK 4
             temp_vector.X = x + offset / 2.0f;
-            temp_vector.Y = y + lengthBottom / 2.0f;
-            temp_vector.Z = z - lengthBottom / 2.0f;
+            temp_vector.Y = y + lengthBottom;
+            temp_vector.Z = z + lengthBottom /7f;
             _vertices.Add(temp_vector);
 
             //============================================
 
-            //Tampilan samping dari depan
+            //Tampilan Belakang
             //============================================
-            // TITIK 1
+
+            //TITIK 5
             temp_vector.X = x - offset / 2.0f;  // kiri
-            temp_vector.Y = y + lengthBottom / 2.0f;  // atas
-            temp_vector.Z = z - lengthBottom / 2.0f;  // depan
+            temp_vector.Y = y + lengthBottom;  // atas
+            temp_vector.Z = z - lengthBottom / 7f;  // depan
             _vertices.Add(temp_vector);
 
-            // TITIK 2
+            // TITIK 6
             temp_vector.X = x + lengthBottom / 2.0f;
-            temp_vector.Y = y - lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
             temp_vector.Z = z - lengthBottom / 2.0f;
             _vertices.Add(temp_vector);
 
-            // TITIK 3
+            // TITIK 7
             temp_vector.X = x - lengthBottom / 2.0f;
-            temp_vector.Y = y - lengthBottom / 2.0f;
+            temp_vector.Y = y - lengthBottom;
             temp_vector.Z = z - lengthBottom / 2.0f;
             _vertices.Add(temp_vector);
 
-            // TITIK 4
+            // TITIK 8
             temp_vector.X = x + offset / 2.0f;
-            temp_vector.Y = y + lengthBottom / 2.0f;
-            temp_vector.Z = z - lengthBottom / 2.0f;
+            temp_vector.Y = y + lengthBottom;
+            temp_vector.Z = z - lengthBottom / 7f;
             _vertices.Add(temp_vector);
+
             //============================================
 
 
-            //// Tampilan Belakang
-            ////============================================
-            //// TITIK 5
-            //temp_vector.X = x - offset / 2.0f;  // kiri
-            //temp_vector.Y = y + lengthBottom / 2.0f;  // atas
-            //temp_vector.Z = z + lengthBottom / 2.0f;  // depan
-            //_vertices.Add(temp_vector);
+            
 
-            //// TITIK 2
-            //temp_vector.X = x + lengthBottom / 2.0f;
-            //temp_vector.Y = y - lengthBottom / 2.0f;
-            //temp_vector.Z = z + lengthBottom / 2.0f;
-            //_vertices.Add(temp_vector);
-
-            //// TITIK 3
-            //temp_vector.X = x - lengthBottom / 2.0f;
-            //temp_vector.Y = y - lengthBottom / 2.0f;
-            //temp_vector.Z = z + lengthBottom / 2.0f;
-            //_vertices.Add(temp_vector);
-
-            //// TITIK 4
-            //temp_vector.X = x + offset / 2.0f;
-            //temp_vector.Y = y + lengthBottom / 2.0f;
-            //temp_vector.Z = z + lengthBottom / 2.0f;
-            //_vertices.Add(temp_vector);
-            ////============================================
-
+            //============================================
             _indices = new List<uint> {
                  //SEGITIGA DEPAN 1
                 0,1,2,
                 //SEGITIGA DEPAN 2
                 0,1,3,
 
+                4,5,6,
+                4,5,7,
+                
+                1,3,5,
+                3,5,7,
 
+                0,4,6,
+                0,2,6
 
-
-                ////SEGITIGA BELAKANG 1
-                //4,5,6,
-                ////SEGITIGA BELAKANG 2
-                //4,5,7,
-
-                //SEGITIGA KANAN 1
-                //0,3,5,
-                ////SEGITIGA KANAN 2
-                //3,5,7,
-                ////SEGITIGA KIRI 1
-                //0,2,4,
-                ////SEGITIGA KIRI 2
-                //2,4,6,
-                ////SEGITIGA BELAKANG 1
-                //4,5,6,
-                ////SEGITIGA BELAKANG 2
-                //5,6,7,
-                ////SEGITIGA BAWAH 1
-                //2,3,6,
-                ////SEGITIGA BAWAH 2
-                //3,6,7
+                
             };
+
+        }
+        public void createSphere(float _positionX = 0.0f, float _positionY = -0.4f, float _positionZ = 0.0f, float _radius = 0.3f)
+        {
+            Vector3 temp_vector;
+            float _pi = 3.14f;
+
+            for (float u = -_pi/2; u <= _pi/2; u += _pi / 30)
+            {
+                for (float v = -_pi/2; v <= _pi/2; v += 0.02f)
+                {
+                    temp_vector.X = _positionX + _radius * (float)Math.Cos(v) * (float)Math.Cos(u);
+                    temp_vector.Y = _positionY + _radius * (float)Math.Cos(v) * (float)Math.Sin(u);
+                    temp_vector.Z = _positionZ + _radius * (float)Math.Sin(v);
+                    _vertices.Add(temp_vector);
+                }
+            }
 
         }
         public Vector3 getRotationResult(Vector3 pivot, Vector3 vector, float angle, Vector3 point, bool isEuler = false)
@@ -336,8 +320,19 @@ namespace Grafkom2
         }
         public void addChild(float x, float y, float z, float lengthTop, float lengthBottom)
         {
-            EightSidedBox newChild = new EightSidedBox();
+            Limb newChild = new Limb();
             newChild.createBoxVertices(x, y, z, lengthTop, lengthBottom);
+            Child.Add(newChild);
+        }
+        public void addHalfSphereChild(float x, float y, float z, float radius,float rotateDegreeX=0, float rotateDegreeY=0, float rotateDegreeZ=0)
+        {
+            Limb newChild = new Limb();
+            newChild.createSphere(x, y, z, radius);
+            rotate(new Vector3(x, y, z), _euler[0], rotateDegreeX);
+            rotate(new Vector3(x, y, z), _euler[1], rotateDegreeY);
+            rotate(new Vector3(x, y, z), _euler[2], rotateDegreeZ);
+            //rotate(new Vector3(x,y,z), _euler[0], 200);
+
             Child.Add(newChild);
         }
     }
