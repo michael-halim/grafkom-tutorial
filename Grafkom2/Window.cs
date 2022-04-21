@@ -20,8 +20,9 @@ namespace Grafkom2
         Asset2d[] _object = new Asset2d[4];
 
         Asset3d[] _object3d = new Asset3d[4];
-
         float degree = 0;
+        Camera _camera;
+
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
@@ -34,8 +35,8 @@ namespace Grafkom2
             //// ganti background
             GL.ClearColor(0.0f, 0.0f, 0.2f, 1.0f);
             _object3d[0] = new Asset3d();
-            //_object3d[0].createBoxVertices(0.0f, 0.0f, 0.0f, 0.5f);
-            //_object3d[0].addChild(0.7f, 0.7f, 0.3f, 0.1f);
+            _object3d[0].createBoxVertices(0.0f, 0.0f, 0.0f, 0.5f);
+            _object3d[0].addChild(0.7f, 0.7f, 0.3f, 0.1f);
 
 
 
@@ -49,7 +50,8 @@ namespace Grafkom2
             //_object3d[0].createSphere(0.0f, 0.0f, 1f, 0.4f);
 
             _object3d[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag", Size.X, Size.Y);
-
+            _camera = new Camera(new Vector3(0, 0, 1), Size.X / Size.Y);
+            CursorGrabbed = true;
             //_object3d[0] = new Asset3d();
             //_object3d[0].createEllipsoid2(1.0f, 0.5f, 0.2f, 0.0f, 0.0f, 0.0f,3,2);
             //_object3d[0].load(Constants.SHADER_PATH + "shader.vert", Constants.SHADER_PATH + "shader.frag", Size.x, Size.y);
@@ -71,7 +73,7 @@ namespace Grafkom2
             //temp = temp * Matrix4.CreateRotationY(degree % 360);
             //temp = temp * Matrix4.CreateRotationZ(degree % 360);
 
-            _object3d[0].render(3,temp);
+            _object3d[0].render(3, temp, _camera.GetViewMatrix(), _camera.GetProjectionMatrix());
 
             //_object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[0], degree % 2);
             _object3d[0].rotate(_object3d[0]._centerPosition, _object3d[0]._euler[1], degree % 2);
@@ -97,6 +99,32 @@ namespace Grafkom2
             {
                 Console.Write("Hello");
             }
+            float cameraSpeed = 0.5f;
+            if (KeyboardState.IsKeyDown(Keys.W))
+            {
+                _camera.Position += _camera.Front * cameraSpeed * (float)args.Time;
+            }
+            if (KeyboardState.IsKeyDown(Keys.S))
+            {
+                _camera.Position -= _camera.Front * cameraSpeed * (float)args.Time;
+            }
+            if (KeyboardState.IsKeyDown(Keys.A))
+            {
+                _camera.Position -= _camera.Right * cameraSpeed * (float)args.Time;
+            }
+            if (KeyboardState.IsKeyDown(Keys.D))
+            {
+                _camera.Position += _camera.Right * cameraSpeed * (float)args.Time;
+            }
+
+            if (KeyboardState.IsKeyDown(Keys.Space))
+            {
+                _camera.Position += _camera.Up * cameraSpeed * (float)args.Time;
+            }
+            if (KeyboardState.IsKeyDown(Keys.LeftShift))
+            {
+                _camera.Position -= _camera.Up * cameraSpeed * (float)args.Time;
+            }
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -108,7 +136,7 @@ namespace Grafkom2
                 float _y = -(MousePosition.Y - Size.Y / 2) / (Size.Y / 2);
 
                 Console.WriteLine("x = " + _x + " , " + "y = " + _y);
-        
+
             }
         }
     }

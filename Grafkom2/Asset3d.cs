@@ -21,8 +21,6 @@ namespace Grafkom2
         int indexs;
         int[] _pascal = { };
 
-        Matrix4 _view;
-        Matrix4 _projection;
         Matrix4 _model;
 
 
@@ -72,8 +70,7 @@ namespace Grafkom2
             _shader = new Shader(shadervert, shaderfrag);
             _shader.Use();
 
-            _view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-            _projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), Size_x / (float)Size_y, 0.1f, 100.0f);
+           
 
             foreach(var item in Child)
             {
@@ -99,7 +96,7 @@ namespace Grafkom2
             _centerPosition = new Vector3(0,0,0);
             Child = new List<Asset3d>();
         }
-        public void render(int _lines, Matrix4 temp)
+        public void render(int _lines, Matrix4 temp, Matrix4 camera_view, Matrix4 camera_projection)
         {
             _shader.Use();
             GL.BindVertexArray(_vertexArrayObject);
@@ -107,8 +104,8 @@ namespace Grafkom2
 
 
             _shader.SetMatrix4("model", _model);
-            _shader.SetMatrix4("view", _view);
-            _shader.SetMatrix4("projection", _projection);
+            _shader.SetMatrix4("view", camera_view);
+            _shader.SetMatrix4("projection", camera_projection);
 
             if (_indices.Count != 0)
             {
@@ -135,7 +132,7 @@ namespace Grafkom2
             }
             foreach (var i in Child)
             {
-                i.render(_lines,temp);
+                i.render(_lines,temp,camera_view,camera_projection);
             }
         }
 
